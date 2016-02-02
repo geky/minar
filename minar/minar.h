@@ -20,10 +20,6 @@
 
 #include "compiler-polyfill/attributes.h"
 #include "minar-platform/minar_platform.h"
-//#include "mbed.h"
-// [TODO] change this
-#include "core-util/Event.h"
-#include "core-util/FunctionPointer.h"
 #include <functional>
 
 namespace minar{
@@ -101,13 +97,6 @@ class Scheduler{
         // Function for posting callback with bound argument(s)
         // usage: postCallback([&]{ ...  // }).withDelay(...).requiring(...).releasing(...);
         static CallbackAdder postCallback(callback_t const& cb);
-
-
-        // Function for posting callbacks using FunctionPointer objects without arguments
-        static CallbackAdder postCallback(mbed::util::FunctionPointer& callback)
-        {
-            return postCallback(callback.bind());
-        }
 
         template<typename T>
         static CallbackAdder postCallback(T *object, void (T::*member)())
