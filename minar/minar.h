@@ -24,6 +24,7 @@
 // [TODO] change this
 #include "core-util/Event.h"
 #include "core-util/FunctionPointer.h"
+#include <functional>
 
 namespace minar{
 
@@ -43,7 +44,7 @@ enum Constants{
 };
 
 /// Basic callback type
-typedef mbed::util::Event callback_t;
+typedef std::function<void()> callback_t;
 
 /// Internal time type
 typedef platform::tick_t tick_t;
@@ -108,17 +109,10 @@ class Scheduler{
             return postCallback(callback.bind());
         }
 
-        // Functions for posting callbacks to direct function pointers
-        // and objects/member pointers without arguments
-        static CallbackAdder postCallback(void (*callback)(void))
-        {
-            return postCallback(mbed::util::FunctionPointer(callback).bind());
-        }
-
         template<typename T>
         static CallbackAdder postCallback(T *object, void (T::*member)())
         {
-            return postCallback(mbed::util::FunctionPointer(object, member).bind());
+            return postCallback(std::bind(member, object));
         }
 
         static int cancelCallback(callback_handle_t handle);
